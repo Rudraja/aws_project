@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Auto Scaling Group for EC2 Web App
+
+Resources:
+  WebAppAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: WebAppAutoScalingGroup
+      VPCZoneIdentifier:
+        - subnet-020a2463b7f4f2f1c
+      LaunchTemplate:
+        LaunchTemplateId: lt-03100c95a6eaf3f43
+        Version: '1'
+      MinSize: '1'
+      MaxSize: '3'
+      DesiredCapacity: '1'
+      TargetGroupARNs: []
+      Tags:
+        - Key: Name
+          Value: autoscaled-webapp-instance
+          PropagateAtLaunch: true
+      MetricsCollection:
+        - Granularity: "1Minute"
+      HealthCheckType: EC2
+      HealthCheckGracePeriod: 300
+
+  WebAppScaleOutPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AutoScalingGroupName: !Ref WebAppAutoScalingGroup
+      PolicyType: TargetTrackingScaling
+      TargetTrackingConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: ASGAverageCPUUtilization
+        TargetValue: 50.0
+
+Outputs:
+  AutoScalingGroupName:
+    Description: Name of the Auto Scaling Group
+    Value: !Ref WebAppAutoScalingGroup
