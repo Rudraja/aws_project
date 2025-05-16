@@ -29,15 +29,15 @@ cloud-infra-webapp-deployment/
 │   └── outputs.tf
 │
 ├── cloudformation/            # CloudFormation stacks for application layer, RDS, and Lambda function
-│   ├── ec2-stack.yaml
-│   ├── lambda-stack.yaml
-│   └── rds-stack.yaml
+│   ├── infrastructure-extension.yaml
+│   ├── autoscaling.yaml
+│   └── lambda-s3-logger.yaml
 │
 ├── boto3-scripts/             # Utility scripts for interacting with AWS services programmatically
-│   ├── create_s3.py           # Creates an S3 bucket and uploads files
+│   ├── s3upload.py            # Creates an S3 bucket and uploads files
 │   ├── ec2.py                 # Retrieves EC2 instance metadata
 │   ├── list_instances.py      # Lists running EC2 instances
-│   └── invoke_lambda.py       # Triggers the Lambda function manually
+│   └── lambda-s3-logger.py     # Triggers the Lambda function manually
 │
 ├── architecture-diagram.jpg   # Visual representation of the system architecture
 │
@@ -99,6 +99,60 @@ Use Python scripts in the `boto3-scripts/` directory to manage and interact with
 - Trigger Lambda events
 
 ---
+
+✅ Implementation Summary
+1. Networking Infrastructure
+Created a VPC with a /16 CIDR block.
+
+Configured two public subnets (for the ALB and EC2) and two private subnets (for the RDS).
+
+Established an Internet Gateway for public access and route tables for correct routing.
+
+Used Terraform to automate the provisioning of all networking components.
+
+2. Compute and Database Resources
+Deployed EC2 instances behind an Application Load Balancer using CloudFormation.
+
+Configured Launch Templates and Auto Scaling Groups to automatically manage EC2 capacity.
+
+Deployed an RDS MySQL database instance in private subnets with public access disabled.
+
+Verified database connectivity from EC2 instances.
+
+3. Web Application Deployment
+Installed and configured a web server on EC2 instances using user data.
+
+Hosted a simple web application accessible via the Load Balancer DNS name.
+
+4. S3 and Lambda Integration
+Created an S3 bucket for storing files.
+
+Developed a Lambda function using Python to log file uploads.
+
+Configured the S3 bucket to trigger the Lambda function on each file upload.
+
+Validated logging by checking CloudWatch Logs for file upload events.
+
+5. Monitoring and Observability
+Verified that EC2 and RDS metrics appear in CloudWatch.
+
+Confirmed Lambda execution logs are being stored in CloudWatch Logs.
+
+6. Security Configuration
+Security Groups created with principle of least privilege:
+
+ALB only allows HTTP (port 80).
+
+EC2 allows inbound traffic only from ALB.
+
+RDS only allows traffic from EC2.
+
+IAM roles assigned to Lambda and EC2 for restricted access to necessary AWS resources.
+
+7. Version Control with GitHub
+All Terraform scripts, CloudFormation templates, Lambda code, and Python scripts are maintained in a GitHub repository.
+
+GitHub tracks all changes and supports collaborative development.
 
 ## 🖼️ Architecture Summary
 
