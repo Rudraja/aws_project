@@ -37,9 +37,9 @@ cloud-infra-webapp-deployment/
 │   ├── s3upload.py            # Creates an S3 bucket and uploads files
 │   ├── ec2.py                 # Retrieves EC2 instance metadata
 │   ├── list_instances.py      # Lists running EC2 instances
-│   └── lambda-s3-logger.py     # Triggers the Lambda function manually
+│   └── lambda-s3-logger.py    # Triggers the Lambda function manually
 │
-├── architecture-diagram.jpg   # Visual representation of the system architecture
+├── Aws Course Project.jpg     # Visual representation of the system architecture
 │
 ├── README.md                  # Detailed documentation and usage guide
 ```
